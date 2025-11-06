@@ -43,5 +43,6 @@ jobs:
           mkdir -p .vercel
           printf '{"projectId":"%s","orgId":"%s"}' "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
           # Produce a production prebuilt output and deploy it
-          npx vercel build --token=$VERCEL_TOKEN --environment=production
+          # The Vercel CLI doesn't accept `--environment` on some versions — set VERCEL_ENV instead.
+          VERCEL_ENV=production npx vercel build --token=$VERCEL_TOKEN
           npx vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
