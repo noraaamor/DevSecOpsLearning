@@ -36,5 +36,12 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           npm install --global vercel
-          vercel build --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
+          # Remove any stale prebuilt output just in case
+          rm -rf .vercel/output || true
+          # Create a minimal local project config so the Vercel CLI doesn't require `vercel pull`.
+          # This prevents the CLI from trying to read project settings from a preview pull.
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}' "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
+          # Produce a production prebuilt output and deploy it
+          npx vercel build --token=$VERCEL_TOKEN --environment=production
+          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
