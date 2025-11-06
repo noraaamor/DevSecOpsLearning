@@ -36,6 +36,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           npm install --global vercel
-          vercel pull --yes --token=$VERCEL_TOKEN --environment=production
-          vercel build --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
+          # Remove any stale prebuilt artifacts that might cause environment mismatches
+          rm -rf .vercel/output || true
+          # Let Vercel build and deploy the production build in their infra
+          npx vercel --prod --confirm --token=$VERCEL_TOKEN
