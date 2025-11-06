@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+# Vercel prebuilt output — don't commit
+.vercel/
 
 # Editor directories and files
 .vscode/*

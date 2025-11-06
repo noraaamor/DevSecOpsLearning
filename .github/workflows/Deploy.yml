@@ -35,14 +35,9 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
+          # Install Vercel CLI (npx can be used instead)
           npm install --global vercel
-          # Remove any stale prebuilt output just in case
+          # Ensure no stale prebuilt output is present from earlier steps
           rm -rf .vercel/output || true
-          # Create a minimal local project config so the Vercel CLI doesn't require `vercel pull`.
-          # This prevents the CLI from trying to read project settings from a preview pull.
-          mkdir -p .vercel
-          printf '{"projectId":"%s","orgId":"%s"}' "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
-          # Produce a production prebuilt output and deploy it
-          # The Vercel CLI doesn't accept `--environment` on some versions — set VERCEL_ENV instead.
-          VERCEL_ENV=production npx vercel build --token=$VERCEL_TOKEN
-          npx vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
+          # Let Vercel run the production build in their infrastructure
+          npx vercel --prod --confirm --token=$VERCEL_TOKEN
